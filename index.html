@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Love Quiz 💖</title>
+
+<style>
+*{box-sizing:border-box;}
+
+body{
+    margin:0;
+    font-family: Arial;
+    background:linear-gradient(135deg,#ffe4ec,#ffd6e7);
+}
+
+/* container */
+.container{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+/* intro */
+#intro{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:#ff9ecb;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    color:white;
+    z-index:10;
+}
+
+/* layout */
+.wrap{
+    display:none;
+    flex-wrap:wrap;
+    gap:20px;
+    justify-content:center;
+}
+
+/* character */
+.character{
+    width:120px;
+    text-align:center;
+}
+.character img{
+    width:100%;
+    border-radius:20px;
+}
+
+/* card */
+.card{
+    width:100%;
+    max-width:400px;
+    background:white;
+    padding:20px;
+    border-radius:20px;
+    text-align:center;
+}
+
+/* buttons */
+button{
+    width:100%;
+    padding:12px;
+    margin:6px 0;
+    border:none;
+    border-radius:10px;
+    transition:0.2s;
+}
+button:active{
+    transform:scale(0.96);
+    background:#ffd6e7;
+}
+
+/* letter */
+#letter{
+    display:none;
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:black;
+    color:white;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+}
+
+/* ❄️ snow */
+#snow{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+    z-index:0;
+}
+.snowflake{
+    position:absolute;
+    top:-10px;
+    color:white;
+    opacity:0.8;
+    animation:fall linear;
+}
+
+/* 💖 heart */
+.heart{
+    position:absolute;
+    top:-10px;
+    animation:fall linear;
+    pointer-events:none;
+}
+
+@keyframes fall{
+    to{
+        transform:translateY(100vh) translateX(20px);
+        opacity:0;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ❄️ snow layer -->
+<div id="snow"></div>
+
+<!-- intro -->
+<div id="intro">
+    <h1>💖 LOVE QUIZ 💖</h1>
+    <button onclick="start()">Bắt đầu</button>
+</div>
+
+<!-- game -->
+<div class="container">
+<div class="wrap" id="game">
+
+<div class="character">
+    <img src="https://i.imgur.com/3ZQ3ZQW.png">
+</div>
+
+<div class="card">
+    <h2 id="q"></h2>
+    <div id="ans"></div>
+</div>
+
+</div>
+</div>
+
+<!-- letter -->
+<div id="letter">
+    <div onclick="openLetter()" style="border:2px solid white;padding:20px;border-radius:10px">
+        💌 Tap để mở
+    </div>
+    <h1 id="msg" style="display:none">💖 vk anh bá nhất tgioi !!! 💖</h1>
+</div>
+
+<script>
+
+// 🔊 sound
+const click = new Audio("https://www.soundjay.com/buttons/sounds/button-16.mp3");
+
+// data
+const quiz=[
+{q:"Họ thích làm gì lúc rảnh?",a:["Nghe nhạc","Chơi game","Xem phim","Lướt mạng"]},
+{q:"Gu nhạc của họ?",a:["Ballad","Rap","Lofi","EDM"]},
+{q:"Họ thích gì?",a:["Mèo","Chó","Cả hai"]},
+{q:"Họ thích đi đâu?",a:["Ở nhà","Cafe","Du lịch"]},
+{q:"Gu ăn uống?",a:["Ngọt","Mặn","Ăn vặt"]}
+];
+
+let i=0;
+
+// start
+function start(){
+    document.getElementById("intro").style.display="none";
+    document.getElementById("game").style.display="flex";
+    load();
+}
+
+// load
+function load(){
+    if(i >= quiz.length){
+        setTimeout(()=>{
+            document.getElementById("letter").style.display="flex";
+            heartEffect();
+        },500);
+        return;
+    }
+
+    let q=quiz[i];
+    document.getElementById("q").innerText=q.q;
+
+    let box=document.getElementById("ans");
+    box.innerHTML="";
+
+    q.a.forEach(x=>{
+        let b=document.createElement("button");
+        b.innerText=x;
+
+        b.onclick=()=>{
+            click.currentTime=0;
+            click.play();
+
+            b.style.background="#ffc0cb";
+
+            setTimeout(()=>{
+                i++;
+                load();
+            },200);
+        };
+
+        box.appendChild(b);
+    });
+}
+
+// mở thư
+function openLetter(){
+    document.querySelector("#letter div").style.display="none";
+    document.getElementById("msg").style.display="block";
+}
+
+// ❄️ snow
+function snowEffect(){
+    const snow = document.getElementById("snow");
+
+    setInterval(()=>{
+        let count = document.querySelectorAll(".snowflake").length;
+        if(count > 60) return;
+
+        let flake = document.createElement("div");
+        flake.className = "snowflake";
+        flake.innerText = "❄";
+
+        flake.style.left = Math.random()*100 + "%";
+        flake.style.fontSize = (10 + Math.random()*10) + "px";
+        flake.style.animationDuration = (4 + Math.random()*4) + "s";
+
+        snow.appendChild(flake);
+
+        setTimeout(()=>flake.remove(),8000);
+    },300);
+}
+
+// 💖 heart (chỉ 1 lần)
+let started = false;
+
+function heartEffect(){
+    if(started) return;
+    started = true;
+
+    setInterval(()=>{
+        let h=document.createElement("div");
+        h.className="heart";
+        h.innerText="💖";
+
+        h.style.left=Math.random()*100+"%";
+        h.style.fontSize=(12+Math.random()*10)+"px";
+        h.style.animationDuration=(4+Math.random()*3)+"s";
+
+        document.body.appendChild(h);
+
+        setTimeout(()=>h.remove(),6000);
+    },600);
+}
+
+// chạy tuyết
+snowEffect();
+
+</script>
+
+</body>
+      </html>
